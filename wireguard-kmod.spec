@@ -19,16 +19,13 @@
 %{!?kversion: %global kversion %(uname -r)}
 
 Name:           %{kmod_name}-kmod
-Version:        1.0.20210606
+Version:        1.0.20220627
 Release:        1%{?dist}
 Summary:        Kernel module for wireguard
 License:        GPLv2
 URL:            https://www.wireguard.com/
 
 Source0:        https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-%{version}.tar.xz
-Patch0:         https://git.zx2c4.com/wireguard-linux-compat/patch/?id=50dda8ce5ee691b97ae640aba4cbe55aa9b62085#/50dda8ce5ee691b97ae640aba4cbe55aa9b62085.patch
-Patch1:         https://git.zx2c4.com/wireguard-linux-compat/patch/?id=29747255f9672035ccf9cc310b7ff66b1f35f1d2#/29747255f9672035ccf9cc310b7ff66b1f35f1d2.patch
-Patch2:         https://git.zx2c4.com/wireguard-linux-compat/patch/?id=8118c247a75ae95169f0a9a539dfc661ffda8bc5#/8118c247a75ae95169f0a9a539dfc661ffda8bc5.patch
 
 BuildRequires:  elfutils-libelf-devel
 BuildRequires:  gcc
@@ -106,5 +103,8 @@ rm -f %{buildroot}/lib/modules/%{kversion}.%{_target_cpu}/modules.*
 %config /etc/depmod.d/kmod-%{kmod_name}.conf
 
 %changelog
+* Tue Aug 09 2022 Simone Caronni <negativo17@gmail.com> - 1.0.20220627-1
+- Update to 1.0.20220627.
+
 * Tue Aug 17 2021 Simone Caronni <negativo17@gmail.com> - 1.0.20210606-1
 - First build.
