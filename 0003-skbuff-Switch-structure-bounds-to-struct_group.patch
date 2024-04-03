@@ -1,0 +1,45 @@
+From 03f61041c17914355dde7261be9ccdc821ddd454 Mon Sep 17 00:00:00 2001
+From: Kees Cook <keescook@chromium.org>
+Date: Sat, 20 Nov 2021 16:31:49 -0800
+Subject: [Backport 03f61041c179] skbuff: Switch structure bounds to
+ struct_group()
+
+In preparation for FORTIFY_SOURCE performing compile-time and run-time
+field bounds checking for memcpy(), memmove(), and memset(), avoid
+intentionally writing across neighboring fields.
+
+Replace the existing empty member position markers "headers_start" and
+"headers_end" with a struct_group(). This will allow memcpy() and sizeof()
+to more easily reason about sizes, and improve readability.
+
+"pahole" shows no size nor member offset changes to struct sk_buff.
+"objdump -d" shows no object code changes (outside of WARNs affected by
+source line number changes).
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Reviewed-by: Jason A. Donenfeld <Jason@zx2c4.com> # drivers/net/wireguard/*
+Link: https://lore.kernel.org/lkml/20210728035006.GD35706@embeddedor
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/wireguard/queueing.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/src/queueing.h b/src/queueing.h
+index 4ef2944a68bc906ebec5167d1e17e281ea67be61..52da5e9630036c15750c0c837f7fcba591445ce5 100644
+--- a/src/queueing.h
++++ b/src/queueing.h
+@@ -81,9 +81,7 @@
+ 	u8 sw_hash = skb->sw_hash;
+ 
+ 	skb_scrub_packet(skb, true);
+-	memset(&skb->headers_start, 0,
+-	       offsetof(struct sk_buff, headers_end) -
+-		       offsetof(struct sk_buff, headers_start));
++	memset(&skb->headers, 0, sizeof(skb->headers));
+ 	skb->pfmemalloc = pfmemalloc;
+ 	if (encapsulating) {
+ 		skb->hash = hash;
+-- 
+2.29.2
+

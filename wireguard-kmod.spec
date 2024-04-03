@@ -26,6 +26,9 @@ License:        GPLv2
 URL:            https://www.wireguard.com/
 
 Source0:        https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-%{version}.tar.xz
+Patch1:         0001-do-not-backport-ktime_get_coarse_boottime_ns.patch
+Patch2:         0002-net-drop-the-weight-argument-from-netif_napi_add.patch
+Patch3:         0003-skbuff-Switch-structure-bounds-to-struct_group.patch
 
 BuildRequires:  elfutils-libelf-devel
 BuildRequires:  gcc
@@ -105,6 +108,7 @@ rm -f %{buildroot}/lib/modules/%{kversion}/modules.*
 %changelog
 * Wed Apr 03 2024 Simone Caronni <negativo17@gmail.com> - 1.0.20220627-4
 - Sync uname -r with kversion passed from scripts.
+- Add CentOS patches.
 
 * Wed Apr 03 2024 Simone Caronni <negativo17@gmail.com> - 1.0.20220627-3
 - Rebuild.

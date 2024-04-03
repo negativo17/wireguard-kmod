@@ -1,0 +1,35 @@
+From b48b89f9c189d24eb5e2b4a0ac067da5a24ee86d Mon Sep 17 00:00:00 2001
+From: Jakub Kicinski <kuba@kernel.org>
+Date: Tue, 27 Sep 2022 06:27:53 -0700
+Subject: [Backport b48b89f9c189] net: drop the weight argument from
+ netif_napi_add
+
+We tell driver developers to always pass NAPI_POLL_WEIGHT
+as the weight to netif_napi_add(). This may be confusing
+to newcomers, drop the weight argument, those who really
+need to tweak the weight can use netif_napi_add_weight().
+
+Acked-by: Marc Kleine-Budde <mkl@pengutronix.de> # for CAN
+Link: https://lore.kernel.org/r/20220927132753.750069-1-kuba@kernel.org
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+---
+ drivers/net/wireguard/peer.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/src/peer.c b/src/peer.c
+index 1acd00ab2fbcbf0ac5faabae474bf6ec16dcf30c..1cb502a932e07c16ecf91121a294ccafc7005516 100644
+--- a/src/peer.c
++++ b/src/peer.c
+@@ -54,8 +54,7 @@ struct wg_peer *wg_peer_create(struct wg_device *wg,
+ 	skb_queue_head_init(&peer->staged_packet_queue);
+ 	wg_noise_reset_last_sent_handshake(&peer->last_sent_handshake);
+ 	set_bit(NAPI_STATE_NO_BUSY_POLL, &peer->napi.state);
+-	netif_napi_add(wg->dev, &peer->napi, wg_packet_rx_poll,
+-		       NAPI_POLL_WEIGHT);
++	netif_napi_add(wg->dev, &peer->napi, wg_packet_rx_poll);
+ 	napi_enable(&peer->napi);
+ 	list_add_tail(&peer->peer_list, &wg->peer_list);
+ 	INIT_LIST_HEAD(&peer->allowedips_list);
+-- 
+2.29.2
+
